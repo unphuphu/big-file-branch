@@ -1,32 +1,3 @@
- select 
-    HM.TENANT_ID
-	, HM.MSHDOBJ_UID
-	, HM.MAT_NM
-	, HM.SUP_NM
-	, HM.CAS_NO
-	, HM.REV_DATE
-	, HM.SPEC_MANA_MAT_YN
-	, HM.MATOBJ_TXT_CNTN
-	, HM.ATTH_DOC_ID
-	, HM.FST_RGST_DTM
-	, HM.FST_RGST_USR_ID
-	, HM.FST_RGST_PRG_ID
-	, HM.FNL_MDFC_DTM
-	, HM.FNL_MDFC_USR_ID
-	, HM.FNL_MDFC_PRG_ID
-	, ROW_NUMBER() OVER (ORDER BY HM.FST_RGST_DTM DESC) AS ROW_NUM
-	, COUNT(*) OVER () AS TOTAL_CNT, 
-	coalesce(json_agg(A.*) filter (where a.ATTH_DOC_ID is not null), '[]' ) as atthDocIds 
-	FROM seasmgr.T_HEL_MSHD_MNG HM
-	LEFT join sflexmgr.T_CMD_ATTH_FILE_D A 
-	on HM.ATTH_DOC_ID = A.atth_doc_id 
-	
-	WHERE HM.TENANT_ID = 'TNT_BASE'
-
-				AND HM.MAT_NM LIKE '%' || 'Acetone' || '%'
-
-				AND HM.FST_RGST_DTM BETWEEN '20260502' AND '20260506'
-				
-					group by HM.TENANT_ID, HM.MSHDOBJ_UID ,HM.ATTH_DOC_ID
-
-			ORDER BY HM.FST_RGST_DTM DESC
+npm create vue@latest task-manager-vue
+cd task-manager-vue
+npm install axios pinia vue-router bootstrap
