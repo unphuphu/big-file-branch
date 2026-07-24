@@ -40,3 +40,49 @@ CREATE TABLE reminders (
 -- Chèn dữ liệu mẫu cho Anh Phú để test nhanh (mật khẩu dạng thô: "123456")
 INSERT INTO users (username, password, fullname, current_streak, longest_streak) 
 VALUES ('admin', '123456', 'Anh Phú', 0, 0);
+
+
+
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.ZonedDateTime;
+
+@Entity
+@Table(name = "vocabularies", indexes = {
+    @Index(name = "idx_vocab_user_date", columnList = "user_id, created_at"),
+    @Index(name = "idx_vocab_user_starred", columnList = "user_id, is_starred"),
+    @Index(name = "idx_vocab_user_wrong", columnList = "user_id, wrong_count")
+})
+@Data // Tự động sinh Getter, Setter, toString bằng Lombok
+public class Vocabulary {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(nullable = false, length = 100)
+    private String word;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String meaning;
+
+    @Column(name = "language_type", nullable = false, length = 10)
+    private String languageType;
+
+    @Column(name = "is_starred")
+    private boolean isStarred;
+
+    @Column(name = "wrong_count")
+    private int wrongCount;
+
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private ZonedDateTime createdAt;
+
+    @Column(name = "updated_at", insertable = false, updatable = false)
+    private ZonedDateTime updatedAt;
+}
