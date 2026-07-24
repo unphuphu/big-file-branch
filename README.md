@@ -86,3 +86,30 @@ public class Vocabulary {
     @Column(name = "updated_at", insertable = false, updatable = false)
     private ZonedDateTime updatedAt;
 }
+
+
+
+package com.example.vocasmart.repository;
+
+import com.example.vocasmart.entity.Vocabulary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface VocabularyRepository extends JpaRepository<Vocabulary, Long> {
+
+    // 1. Lấy toàn bộ từ mới tạo trong ngày hôm nay (Dùng CURRENT_DATE trong Postgres)
+    @Query(value = "SELECT * FROM vocabularies WHERE user_id = :userId AND DATE(created_at) = CURRENT_DATE ORDER BY id DESC", nativeQuery = true)
+    List<Vocabulary> findTodayVocabularies(@Param("userId") Long userId);
+
+    // 2. Lấy ngẫu nhiên từ cũ (Dùng RANDOM() của Postgres)
+    @Query(value = "SELECT * FROM vocabularies WHERE user_id = :userId AND DATE(created_at) < CURRENT_DATE ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    List<Vocabulary> findOldVocabulariesRandom(@Param("userId") Long userId, @Param("limit") int limit);
+
+    // 3. Lấy ngẫu nhiên từ ưu tiên (Dùng RANDOM() của Postgres)
+    @Query(value = "SELECT * FROM vocabularies WHERE user_id = :userId AND (is_starred = true OR wrong_count >= 3) ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    List<Vocabulary> findPriorityVocabulariesRandom(@Param("userId") Long userId, @Param("limit") int limit);
+}
